@@ -40,6 +40,7 @@
             </HBox>
 
             <Button text="➕ Добавить поле" onAction="#addField" styleClass="add-button" prefWidth="180"/>
+            <Button text="Удалить поле" onAction="#deleteField"/>
 
             <Label text="Список полей:" styleClass="title-label"/>
             <ListView fx:id="fieldsListView" prefHeight="250"/>

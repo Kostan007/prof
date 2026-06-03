@@ -130,6 +130,30 @@ public class MainController implements Initializable {
         fileService.saveField(field);
         fieldsListView.getSelectionModel().select(field);
     }
+    @FXML
+    private void deleteField() {
+        Field selected = fieldsListView.getSelectionModel().getSelectedItem();
+
+        if (selected == null) {
+            showAlert("Ошибка", "Выберите поле для удаления!", Alert.AlertType.WARNING);
+            return;
+        }
+
+        // удаляем из списка (UI обновится автоматически)
+        fields.remove(selected);
+
+        // если удаляем текущее поле
+        if (selected == currentField) {
+            currentField = null;
+            zonesTableView.getItems().clear();
+            heatMapGrid.getChildren().clear();
+        }
+
+        // 👉 ВАЖНО: удалить из файла
+        fileService.deleteField(selected);
+
+        showAlert("Успешно", "Поле удалено", Alert.AlertType.INFORMATION);
+    }
 
     @FXML
     private void calculateStress() {

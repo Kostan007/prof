@@ -15,6 +15,8 @@ public class Field {
     private int gridSize;
     private List<Zone> zones = new ArrayList<>();
     private List<HistoryEntry> history = new ArrayList<>();
+    private int width;
+    private int height;
 
     public Field(String name, String crop, String growthPhase, double area,
                  double centerX, double centerY, int gridSize) {
@@ -50,6 +52,9 @@ public class Field {
 
     public double getAverageStress() {
         return zones.stream().mapToDouble(Zone::getStressIndex).average().orElse(0.0);
+    }
+    public String toCSV() {
+        return name + "," + width + "," + height;
     }
 
     // ==================== GETTERS & SETTERS ====================

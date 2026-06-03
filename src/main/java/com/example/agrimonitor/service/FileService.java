@@ -93,6 +93,24 @@ public class FileService {
         }
 
     }
+    public void deleteField(Field field) {
+        List<Field> allFields = loadAllFields();
+
+        allFields.removeIf(f -> f.getName().equals(field.getName()));
+
+        // перезаписываем файл
+        saveAllFields(allFields);
+    }
+    public void saveAllFields(List<Field> fields) {
+        try (PrintWriter writer = new PrintWriter("fields.csv")) {
+            for (Field f : fields) {
+                writer.println(f.toCSV());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Экспорт текстового отчёта
      */
