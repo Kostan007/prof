@@ -4,6 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.chart.*?>
+<?import javafx.scene.shape.Rectangle?>
 
 <TabPane xmlns="http://javafx.com/javafx/21"
          xmlns:fx="http://javafx.com/fxml/1"
@@ -39,8 +40,11 @@
                 <Spinner fx:id="gridSizeSpinner" prefWidth="70"/>
             </HBox>
 
-            <Button text="➕ Добавить поле" onAction="#addField" styleClass="add-button" prefWidth="180"/>
-            <Button text="Удалить поле" onAction="#deleteField"/>
+            <HBox spacing="10">
+                <Button text="➕ Добавить поле" onAction="#addField" styleClass="add-button" prefWidth="180"/>
+                <Button text="Удалить поле" onAction="#deleteField"/>
+                <Button text="Сбросить" onAction="#resetForm"/>
+            </HBox>
 
             <Label text="Список полей:" styleClass="title-label"/>
             <ListView fx:id="fieldsListView" prefHeight="250"/>
@@ -49,60 +53,116 @@
 
     <!-- 2. Мониторинг -->
     <Tab text="Мониторинг">
-        <SplitPane dividerPositions="0.33">
-            <VBox spacing="12">
-                <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+        <SplitPane dividerPositions="0.35">
 
-                <Label text="Метеоданные" styleClass="title-label"/>
-                <GridPane hgap="10" vgap="8">
-                    <Label text="T воздуха (°C):" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <Spinner fx:id="airTempSpinner" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+            <!-- Левая панель: метеоданные + таблица + прогноз -->
+            <ScrollPane fitToWidth="true">
+                <VBox spacing="12">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
 
-                    <Label text="Осадки за 7 дней (мм):" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <Spinner fx:id="precipitationSpinner" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    <Label text="Метеоданные" styleClass="title-label"/>
+                    <GridPane hgap="10" vgap="8">
+                        <Label text="T воздуха (°C):"         GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <Spinner fx:id="airTempSpinner"        GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="110"/>
 
-                    <Label text="Влажность воздуха (%):" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                    <Spinner fx:id="airHumiditySpinner" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-                </GridPane>
+                        <Label text="Осадки за 7 дней (мм):"  GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <Spinner fx:id="precipitationSpinner"  GridPane.rowIndex="1" GridPane.columnIndex="1" prefWidth="110"/>
 
-                <Button text="Применить погоду ко всем зонам" onAction="#applyWeatherToAll" styleClass="add-button"/>
+                        <Label text="Влажность воздуха (%):"  GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <Spinner fx:id="airHumiditySpinner"    GridPane.rowIndex="2" GridPane.columnIndex="1" prefWidth="110"/>
 
-                <HBox spacing="8">
-                    <Button text="Рассчитать стресс" onAction="#calculateStress"/>
-                    <Button text="Случайные NDVI" onAction="#generateRandomNDVI"/>
-                </HBox>
+                        <Label text="Солнечная радиация (кВт·ч/м²):" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <Spinner fx:id="radiationSpinner"      GridPane.rowIndex="3" GridPane.columnIndex="1" prefWidth="110"/>
 
-                <Label text="Таблица зон"/>
-                <TableView fx:id="zonesTableView" prefHeight="280">
-                    <columns>
-                        <TableColumn fx:id="zoneColumn" text="Зона"/>
-                        <TableColumn fx:id="ndviColumn" text="NDVI"/>
-                        <TableColumn fx:id="soilTempColumn" text="T почвы"/>
-                        <TableColumn fx:id="soilMoistureColumn" text="Влажн. почвы"/>
-                        <TableColumn fx:id="stressColumn" text="Стресс %"/>
-                        <TableColumn fx:id="statusColumn" text="Статус"/>
-                    </columns>
-                </TableView>
-            </VBox>
+                        <Label text="Дата съёмки:"            GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <DatePicker fx:id="surveyDatePicker"   GridPane.rowIndex="4" GridPane.columnIndex="1" prefWidth="150"/>
+                    </GridPane>
 
-            <VBox spacing="12" alignment="CENTER">
-                <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
-                <Label text="Тепловая карта стресса" styleClass="title-label"/>
-                <GridPane fx:id="heatMapGrid" hgap="6" vgap="6"/>
+                    <Button text="Применить погоду ко всем зонам" onAction="#applyWeatherToAll" styleClass="add-button"/>
 
-                <HBox spacing="30">
-                    <VBox alignment="CENTER">
-                        <Label text="Средний NDVI"/>
-                        <Label fx:id="avgNDVILabel" text="0.000" styleClass="big-label"/>
-                    </VBox>
-                    <VBox alignment="CENTER">
-                        <Label text="Общий стресс"/>
-                        <Label fx:id="stressIndexLabel" text="0%" styleClass="big-label"/>
-                    </VBox>
-                </HBox>
+                    <HBox spacing="8">
+                        <Button text="Рассчитать стресс"   onAction="#calculateStress"/>
+                        <Button text="Случайные NDVI"       onAction="#generateRandomNDVI"/>
+                    </HBox>
+                    <HBox spacing="8">
+                        <Button text="Загрузить NDVI из CSV" onAction="#loadNDVIFromCSV"/>
+                    </HBox>
 
-                <TextArea fx:id="recommendationsArea" editable="false" prefHeight="140"/>
-            </VBox>
+                    <Label text="Таблица зон" styleClass="title-label"/>
+                    <TableView fx:id="zonesTableView" prefHeight="250">
+                        <columns>
+                            <TableColumn fx:id="zoneColumn"         text="Зона"         prefWidth="60"/>
+                            <TableColumn fx:id="ndviColumn"         text="NDVI"         prefWidth="60"/>
+                            <TableColumn fx:id="soilTempColumn"     text="T почвы"      prefWidth="70"/>
+                            <TableColumn fx:id="soilMoistureColumn" text="Влажн.почвы"  prefWidth="90"/>
+                            <TableColumn fx:id="stressColumn"       text="Стресс %"     prefWidth="70"/>
+                            <TableColumn fx:id="statusColumn"       text="Статус"       prefWidth="90"/>
+                        </columns>
+                    </TableView>
+
+                    <!-- Прогноз стресса -->
+                    <Label text="Прогноз стресса (3 дня)" styleClass="title-label"/>
+                    <GridPane hgap="10" vgap="6">
+                        <Label text="Темп. дней, °C (через запятую):" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="forecastTempsField" promptText="30,32,28"
+                                   GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="120"/>
+                        <Label text="Осадки дней, мм (через запятую):" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="forecastRainsField" promptText="0,0,5"
+                                   GridPane.rowIndex="1" GridPane.columnIndex="1" prefWidth="120"/>
+                    </GridPane>
+                    <Button text="Рассчитать прогноз" onAction="#calculateForecast"/>
+                    <TextArea fx:id="forecastArea" editable="false" prefHeight="110" wrapText="true"/>
+                </VBox>
+            </ScrollPane>
+
+            <!-- Правая панель: тепловая карта + статистика + гистограмма -->
+            <ScrollPane fitToWidth="true">
+                <VBox spacing="12" alignment="TOP_CENTER">
+                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+                    <Label text="Тепловая карта стресса" styleClass="title-label"/>
+                    <GridPane fx:id="heatMapGrid" hgap="4" vgap="4" alignment="CENTER"/>
+
+                    <!-- Легенда -->
+                    <HBox spacing="10" alignment="CENTER">
+                        <Rectangle width="18" height="18" fill="#2ecc71" arcWidth="4" arcHeight="4"/>
+                        <Label text="0–30% (Низкий)"/>
+                        <Rectangle width="18" height="18" fill="#f39c12" arcWidth="4" arcHeight="4"/>
+                        <Label text="30–60% (Средний)"/>
+                        <Rectangle width="18" height="18" fill="#e74c3c" arcWidth="4" arcHeight="4"/>
+                        <Label text="60–100% (Высокий)"/>
+                    </HBox>
+
+                    <!-- Итоговые показатели -->
+                    <HBox spacing="20" alignment="CENTER">
+                        <VBox alignment="CENTER">
+                            <Label text="Средний NDVI"/>
+                            <Label fx:id="avgNDVILabel" text="0.000" styleClass="big-label"/>
+                        </VBox>
+                        <VBox alignment="CENTER">
+                            <Label text="Общий стресс"/>
+                            <Label fx:id="stressIndexLabel" text="0%" styleClass="big-label"/>
+                        </VBox>
+                        <VBox alignment="CENTER">
+                            <Label text="Здоровых зон"/>
+                            <Label fx:id="healthyZonesLabel" text="0%" styleClass="big-label"/>
+                        </VBox>
+                        <VBox alignment="CENTER">
+                            <Label text="Критических"/>
+                            <Label fx:id="criticalZonesLabel" text="0%" styleClass="big-label"/>
+                        </VBox>
+                    </HBox>
+
+                    <TextArea fx:id="recommendationsArea" editable="false" prefHeight="160" wrapText="true"/>
+
+                    <!-- Гистограмма распределения зон -->
+                    <Label text="Распределение зон по уровням стресса" styleClass="title-label"/>
+                    <BarChart fx:id="stressBarChart" prefHeight="200" animated="false" legendVisible="false">
+                        <xAxis><CategoryAxis label="Уровень стресса"/></xAxis>
+                        <yAxis><NumberAxis label="Кол-во зон" lowerBound="0" autoRanging="true"/></yAxis>
+                    </BarChart>
+                </VBox>
+            </ScrollPane>
         </SplitPane>
     </Tab>
 
@@ -112,17 +172,37 @@
             <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
 
             <HBox spacing="10">
-                <Button text="Сохранить текущую съёмку" onAction="#saveCurrentSnapshot"/>
+                <Button text="Сохранить текущую съёмку"     onAction="#saveCurrentSnapshot" styleClass="add-button"/>
+                <Button text="Сравнить с предыдущей съёмкой" onAction="#compareWithPrevious"/>
             </HBox>
 
             <Label text="История съёмок" styleClass="title-label"/>
-            <TableView fx:id="historyTableView" prefHeight="180"/>
+            <TableView fx:id="historyTableView" prefHeight="200">
+                <columns>
+                    <TableColumn fx:id="historyDateColumn"    text="Дата"          prefWidth="110"/>
+                    <TableColumn fx:id="historyNDVIColumn"    text="Средний NDVI"  prefWidth="110"/>
+                    <TableColumn fx:id="historyStressColumn"  text="Стресс %"      prefWidth="90"/>
+                    <TableColumn fx:id="historyWeatherColumn" text="Погода"        prefWidth="180"/>
+                    <TableColumn fx:id="historyRecColumn"     text="Рекомендации"  prefWidth="300"/>
+                </columns>
+            </TableView>
 
             <Label text="Динамика NDVI" styleClass="title-label"/>
-            <LineChart fx:id="ndviLineChart" prefHeight="280" title="Изменение NDVI">
+            <LineChart fx:id="ndviLineChart" prefHeight="240" title="Изменение NDVI" animated="false">
                 <xAxis><CategoryAxis label="Дата"/></xAxis>
-                <yAxis><NumberAxis label="NDVI" lowerBound="0.0" upperBound="1.0"/></yAxis>
+                <yAxis><NumberAxis label="NDVI" lowerBound="0.0" upperBound="1.0" autoRanging="false"/></yAxis>
             </LineChart>
+
+            <Label text="Карта изменений (последние 2 съёмки)" styleClass="title-label"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Rectangle width="16" height="16" fill="green"/>
+                <Label text="Улучшилось"/>
+                <Rectangle width="16" height="16" fill="red"/>
+                <Label text="Ухудшилось"/>
+                <Rectangle width="16" height="16" fill="yellow" stroke="gray" strokeWidth="1"/>
+                <Label text="Без изменений"/>
+            </HBox>
+            <GridPane fx:id="compareMapGrid" hgap="4" vgap="4"/>
         </VBox>
     </Tab>
 

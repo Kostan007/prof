@@ -39,10 +39,14 @@ public class Field {
         }
     }
 
-    /** Главный метод расчёта стресса */
     public void calculateAllStress(StressCalculator calculator) {
+        calculateAllStress(calculator, 22.0, 15.0, 65.0, 4.0);
+    }
+
+    public void calculateAllStress(StressCalculator calculator,
+                                   double airTemp, double rain, double humidity, double radiation) {
         for (Zone zone : zones) {
-            calculator.calculateStress(zone);
+            calculator.calculateAndApplyStress(zone, crop, growthPhase, airTemp, rain, humidity, radiation);
         }
     }
 
@@ -54,7 +58,7 @@ public class Field {
         return zones.stream().mapToDouble(Zone::getStressIndex).average().orElse(0.0);
     }
     public String toCSV() {
-        return name + "," + width + "," + height;
+        return String.join(",", name, crop, growthPhase, String.valueOf(area), String.valueOf(gridSize));
     }
 
     // ==================== GETTERS & SETTERS ====================

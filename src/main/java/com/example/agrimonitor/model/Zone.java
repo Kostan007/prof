@@ -8,6 +8,7 @@ public class Zone {
     private double ndvi = 0.5;
     private double soilTemp = 22.0;
     private double soilMoisture = 60.0;
+    private double solarRadiation = 4.0;
     private double stressIndex = 0.0;
     private String status = "Не определено";
 
@@ -45,6 +46,9 @@ public class Zone {
 
     public double getSoilMoisture() { return soilMoisture; }
     public void setSoilMoisture(double soilMoisture) { this.soilMoisture = soilMoisture; }
+
+    public double getSolarRadiation() { return solarRadiation; }
+    public void setSolarRadiation(double solarRadiation) { this.solarRadiation = Math.max(0, Math.min(8, solarRadiation)); }
 
     public double getStressIndex() { return stressIndex; }
     public void setStressIndex(double stressIndex) {
