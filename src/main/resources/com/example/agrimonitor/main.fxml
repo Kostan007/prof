@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.chart.*?>
+
+<TabPane xmlns="http://javafx.com/javafx/21"
+         xmlns:fx="http://javafx.com/fxml/1"
+         fx:controller="com.example.agrimonitor.controller.MainController"
+         tabClosingPolicy="UNAVAILABLE">
+
+    <!-- 1. Поля -->
+    <Tab text="Поля">
+        <VBox spacing="15">
+            <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Название поля:"/>
+                <TextField fx:id="fieldNameField" prefWidth="220" promptText="Например: Поле А1"/>
+                <Label text="Культура:"/>
+                <ComboBox fx:id="cropComboBox" prefWidth="160"/>
+            </HBox>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Фаза роста:"/>
+                <ComboBox fx:id="phaseComboBox" prefWidth="160"/>
+                <Label text="Площадь (га):"/>
+                <Spinner fx:id="areaSpinner" prefWidth="100"/>
+            </HBox>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Координаты центра:"/>
+                <Spinner fx:id="centerXSpinner" prefWidth="80"/>
+                <Label text="X"/>
+                <Spinner fx:id="centerYSpinner" prefWidth="80"/>
+                <Label text="Y"/>
+                <Label text="Сетка N×N:"/>
+                <Spinner fx:id="gridSizeSpinner" prefWidth="70"/>
+            </HBox>
+
+            <Button text="➕ Добавить поле" onAction="#addField" styleClass="add-button" prefWidth="180"/>
+
+            <Label text="Список полей:" styleClass="title-label"/>
+            <ListView fx:id="fieldsListView" prefHeight="250"/>
+        </VBox>
+    </Tab>
+
+    <!-- 2. Мониторинг -->
+    <Tab text="Мониторинг">
+        <SplitPane dividerPositions="0.33">
+            <VBox spacing="12">
+                <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+                <Label text="Метеоданные" styleClass="title-label"/>
+                <GridPane hgap="10" vgap="8">
+                    <Label text="T воздуха (°C):" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <Spinner fx:id="airTempSpinner" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                    <Label text="Осадки за 7 дней (мм):" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <Spinner fx:id="precipitationSpinner" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                    <Label text="Влажность воздуха (%):" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <Spinner fx:id="airHumiditySpinner" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                </GridPane>
+
+                <Button text="Применить погоду ко всем зонам" onAction="#applyWeatherToAll" styleClass="add-button"/>
+
+                <HBox spacing="8">
+                    <Button text="Рассчитать стресс" onAction="#calculateStress"/>
+                    <Button text="Случайные NDVI" onAction="#generateRandomNDVI"/>
+                </HBox>
+
+                <Label text="Таблица зон"/>
+                <TableView fx:id="zonesTableView" prefHeight="280">
+                    <columns>
+                        <TableColumn fx:id="zoneColumn" text="Зона"/>
+                        <TableColumn fx:id="ndviColumn" text="NDVI"/>
+                        <TableColumn fx:id="soilTempColumn" text="T почвы"/>
+                        <TableColumn fx:id="soilMoistureColumn" text="Влажн. почвы"/>
+                        <TableColumn fx:id="stressColumn" text="Стресс %"/>
+                        <TableColumn fx:id="statusColumn" text="Статус"/>
+                    </columns>
+                </TableView>
+            </VBox>
+
+            <VBox spacing="12" alignment="CENTER">
+                <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                <Label text="Тепловая карта стресса" styleClass="title-label"/>
+                <GridPane fx:id="heatMapGrid" hgap="6" vgap="6"/>
+
+                <HBox spacing="30">
+                    <VBox alignment="CENTER">
+                        <Label text="Средний NDVI"/>
+                        <Label fx:id="avgNDVILabel" text="0.000" styleClass="big-label"/>
+                    </VBox>
+                    <VBox alignment="CENTER">
+                        <Label text="Общий стресс"/>
+                        <Label fx:id="stressIndexLabel" text="0%" styleClass="big-label"/>
+                    </VBox>
+                </HBox>
+
+                <TextArea fx:id="recommendationsArea" editable="false" prefHeight="140"/>
+            </VBox>
+        </SplitPane>
+    </Tab>
+
+    <!-- 3. История -->
+    <Tab text="История">
+        <VBox spacing="15">
+            <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+
+            <HBox spacing="10">
+                <Button text="Сохранить текущую съёмку" onAction="#saveCurrentSnapshot"/>
+            </HBox>
+
+            <Label text="История съёмок" styleClass="title-label"/>
+            <TableView fx:id="historyTableView" prefHeight="180"/>
+
+            <Label text="Динамика NDVI" styleClass="title-label"/>
+            <LineChart fx:id="ndviLineChart" prefHeight="280" title="Изменение NDVI">
+                <xAxis><CategoryAxis label="Дата"/></xAxis>
+                <yAxis><NumberAxis label="NDVI" lowerBound="0.0" upperBound="1.0"/></yAxis>
+            </LineChart>
+        </VBox>
+    </Tab>
+
+    <!-- 4. Отчёты -->
+    <Tab text="Отчёты">
+        <VBox spacing="20" alignment="CENTER">
+            <padding><Insets top="50" right="50" bottom="50" left="50"/></padding>
+            <Button text="Экспорт отчёта по полю (TXT)" onAction="#exportReport" prefWidth="320"/>
+            <Button text="Экспорт тепловой карты (PNG)" onAction="#exportMapAsPNG" prefWidth="320"/>
+        </VBox>
+    </Tab>
+
+</TabPane>

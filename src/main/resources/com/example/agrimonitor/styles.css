@@ -1,0 +1,62 @@
+.root {
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 14px;
+}
+
+.title-label {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2e7d32;
+}
+
+.big-label {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1b5e20;
+}
+
+.add-button {
+    -fx-background-color: #43a047;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16;
+}
+
+.add-button:hover {
+    -fx-background-color: #2e7d32;
+}
+
+/* Стили для тепловой карты */
+.heat-map-cell {
+    -fx-border-color: #333;
+    -fx-border-width: 1;
+}
+
+/* Таблица */
+.table-view {
+    -fx-background-color: #f5f5f5;
+}
+
+.table-column {
+    -fx-alignment: CENTER;
+}
+
+/* Кнопки */
+Button {
+    -fx-background-color: #4caf50;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+Button:hover {
+    -fx-background-color: #388e3c;
+}
+
+TabPane {
+    -fx-tab-min-width: 120px;
+}
+
+Tab {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
